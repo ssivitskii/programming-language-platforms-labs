@@ -1,0 +1,47 @@
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+.cache/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.log
+
+# Private environment and key files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Generated object files; the four original Lab2 inputs are course data
+*.o
+!/Lab2/core.o
+!/Lab2/legacy.o
+!/Lab2/hotfix.o
+!/Lab2/main.o
+
+# Generated executables
+/Lab1/taskA/simple
+/Lab1/taskB/solve
+/Lab1/taskB/solve.out
+/Lab1/taskB/restored
+/Lab1/taskB/legacy
+/Lab2/app
+/Lab2/app_warn
+/Lab2/app_better
+/Lab2/fix/app_better_extern
+/Lab2/fix/app_better_static

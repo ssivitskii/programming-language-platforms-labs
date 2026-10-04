@@ -1,0 +1,216 @@
++ uname -m
+x86_64
++ g++ --version
++ head -1
+g++ (GCC) 14.4.0
++ g++ -E simple.cpp -o simple.i
++ wc -l simple.cpp simple.i
+   23 simple.cpp
+ 1100 simple.i
+ 1123 total
++ grep -n int main simple.i
+1095:int main() {
++ grep -n Result: %d simple.i
+1098:    printf("Result: %d, Counter: %d, Magic: %d\n", result, global_counter, MAGIC);
++ grep -c ^#  simple.i
+142
++ grep -n ^#  simple.i
++ tail -5
+1003:# 96 "/usr/local/include/c++/14.4.0/cstdio" 3
+1056:# 157 "/usr/local/include/c++/14.4.0/cstdio" 3
+1059:# 175 "/usr/local/include/c++/14.4.0/cstdio" 3
+1076:# 2 "simple.cpp" 2
+1079:# 3 "simple.cpp"
++ grep -n MAGIC simple.i
+1081:const int MAGIC = 42;
+1098:    printf("Result: %d, Counter: %d, Magic: %d\n", result, global_counter, MAGIC);
++ grep -n+  -w printf simple.i
+head -3
+620:extern int printf (const char *__restrict __format, ...);
+1035:  using ::printf;
+1098:    printf("Result: %d, Counter: %d, Magic: %d\n", result, global_counter, MAGIC);
++ g++ -S -masm=intel -O0 simple.cpp -o simple_O0.s
++ g++ -S -masm=intel -O2 simple.cpp -o simple_O2.s
++ wc -lc simple_O0.s simple_O2.s
+ 123 2247 simple_O0.s
+  76 1439 simple_O2.s
+ 199 3686 total
++ grep -vcE ^\s*\. simple_O0.s
+56
++ grep -vcE ^\s*\. simple_O2.s
+26
++ sed -n /^_Z6squarei:/,/\.cfi_endproc/p simple_O0.s
+_Z6squarei:
+.LFB3:
+	.cfi_startproc
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	mov	DWORD PTR [rbp-4], edi
+	mov	eax, DWORD PTR [rbp-4]
+	imul	eax, eax
+	pop	rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
++ sed -n /^_Z14sum_of_squaresii:/,/\.cfi_endproc/p simple_O0.s
+_Z14sum_of_squaresii:
+.LFB4:
+	.cfi_startproc
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	push	rbx
+	sub	rsp, 8
+	.cfi_offset 3, -24
+	mov	DWORD PTR [rbp-12], edi
+	mov	DWORD PTR [rbp-16], esi
+	mov	eax, DWORD PTR [rbp-12]
+	mov	edi, eax
+	call	_Z6squarei
+	mov	ebx, eax
+	mov	eax, DWORD PTR [rbp-16]
+	mov	edi, eax
+	call	_Z6squarei
+	add	eax, ebx
+	mov	rbx, QWORD PTR [rbp-8]
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
++ sed -n /^main:/,/\.cfi_endproc/p simple_O0.s
+main:
+.LFB6:
+	.cfi_startproc
+	push	rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	mov	rbp, rsp
+	.cfi_def_cfa_register 6
+	sub	rsp, 16
+	mov	esi, 4
+	mov	edi, 3
+	call	_Z14sum_of_squaresii
+	mov	DWORD PTR [rbp-4], eax
+	call	_Z12bump_counterv
+	mov	edx, DWORD PTR global_counter[rip]
+	mov	eax, DWORD PTR [rbp-4]
+	mov	ecx, 42
+	mov	esi, eax
+	mov	edi, OFFSET FLAT:.LC0
+	mov	eax, 0
+	call	printf
+	mov	eax, 0
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
++ sed -n /^_Z6squarei:/,/\.cfi_endproc/p simple_O2.s
+_Z6squarei:
+.LFB15:
+	.cfi_startproc
+	imul	edi, edi
+	mov	eax, edi
+	ret
+	.cfi_endproc
++ sed -n /^_Z14sum_of_squaresii:/,/\.cfi_endproc/p simple_O2.s
+_Z14sum_of_squaresii:
+.LFB16:
+	.cfi_startproc
+	imul	edi, edi
+	imul	esi, esi
+	lea	eax, [rdi+rsi]
+	ret
+	.cfi_endproc
++ sed -n /^main:/,/\.cfi_endproc/p simple_O2.s
+main:
+.LFB18:
+	.cfi_startproc
+	sub	rsp, 8
+	.cfi_def_cfa_offset 16
+	mov	eax, DWORD PTR global_counter[rip]
+	mov	ecx, 42
+	mov	esi, 25
+	mov	edi, OFFSET FLAT:.LC0
+	lea	edx, [rax+1]
+	xor	eax, eax
+	mov	DWORD PTR global_counter[rip], edx
+	call	printf
+	xor	eax, eax
+	add	rsp, 8
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
++ grep -n call simple_O2.s
+60:	call	printf
++ g++ -c simple.cpp -o simple.o
++ nm simple.o
+000000000000003c T _Z12bump_counterv
+000000000000000f T _Z14sum_of_squaresii
+0000000000000000 T _Z6squarei
+0000000000000000 r _ZL5MAGIC
+0000000000000000 B global_counter
+0000000000000052 T main
+                 U printf
++ nm -C simple.o
+000000000000003c T bump_counter()
+000000000000000f T sum_of_squares(int, int)
+0000000000000000 T square(int)
+0000000000000000 r MAGIC
+0000000000000000 B global_counter
+0000000000000052 T main
+                 U printf
++ size simple.o
+   text	   data	    bss	    dec	    hex	filename
+    347	      0	      4	    351	    15f	simple.o
++ size -A simple.o
+simple.o  :
+section           size   addr
+.text              151      0
+.data                0      0
+.bss                 4      0
+.rodata             44      0
+.comment            19      0
+.note.GNU-stack      0      0
+.eh_frame          152      0
+Total              370
+
+
++ objdump -h simple.o
+
+simple.o:     file format elf64-x86-64
+
+Sections:
+Idx Name          Size      VMA               LMA               File off  Algn
+  0 .text         00000097  0000000000000000  0000000000000000  00000040  2**0
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  1 .data         00000000  0000000000000000  0000000000000000  000000d7  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000004  0000000000000000  0000000000000000  000000d8  2**2
+                  ALLOC
+  3 .rodata       0000002c  0000000000000000  0000000000000000  000000d8  2**3
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  4 .comment      00000013  0000000000000000  0000000000000000  00000104  2**0
+                  CONTENTS, READONLY
+  5 .note.GNU-stack 00000000  0000000000000000  0000000000000000  00000117  2**0
+                  CONTENTS, READONLY
+  6 .eh_frame     00000098  0000000000000000  0000000000000000  00000118  2**3
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
++ g++ simple.o -o simple
++ ./simple
+Result: 25, Counter: 1, Magic: 42
++ echo exit code: 0
+exit code: 0
++ size simple
+   text	   data	    bss	    dec	    hex	filename
+   1282	    592	      8	   1882	    75a	simple
++ + grep -E  (main|_Z|global_counter|MAGIC|printf)
+nm -C simple
+0000000000402008 r MAGIC
+000000000040401c B global_counter
+0000000000401178 T main
+                 U printf@GLIBC_2.2.5

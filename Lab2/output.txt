@@ -1,0 +1,465 @@
++ + gcc --version
+head -1
+gcc (GCC) 14.4.0
++ + headld --version -1
+
+GNU ld (GNU Binutils for Debian) 2.44
++ size core.o legacy.o hotfix.o main.o
+   text	   data	    bss	    dec	    hex	filename
+    266	   4040	  50000	  54306	   d422	core.o
+    172	      0	      4	    176	     b0	legacy.o
+    127	      0	      0	    127	     7f	hotfix.o
+    118	      0	      0	    118	     76	main.o
++ size -A core.o
+core.o  :
+section               size   addr
+.text                   70      0
+.data                 4032      0
+.bss                 50000      0
+.rodata                 76      0
+.data.rel.local          8      0
+.comment                39      0
+.note.GNU-stack          0      0
+.note.gnu.property      32      0
+.eh_frame               88      0
+Total                54345
+
+
++ ls -l core.o legacy.o hotfix.o main.o
+-rw-r--r-- 1 root root 6200 Oct  4 19:28 core.o
+-rw-r--r-- 1 root root 1456 Oct  4 19:28 hotfix.o
+-rw-r--r-- 1 root root 1608 Oct  4 19:28 legacy.o
+-rw-r--r-- 1 root root 1448 Oct  4 19:28 main.o
++ readelf -S -W core.o
+There are 16 section headers, starting at offset 0x1438:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        0000000000000000 000040 000046 00  AX  0   0  1
+  [ 2] .rela.text        RELA            0000000000000000 0012e8 000078 18   I 13   1  8
+  [ 3] .data             PROGBITS        0000000000000000 000088 000fc0 00  WA  0   0 32
+  [ 4] .bss              NOBITS          0000000000000000 001048 00c350 00  WA  0   0 32
+  [ 5] .rodata           PROGBITS        0000000000000000 001048 00004c 00   A  0   0 16
+  [ 6] .data.rel.local   PROGBITS        0000000000000000 001098 000008 00  WA  0   0  8
+  [ 7] .rela.data.rel.local RELA            0000000000000000 001360 000018 18   I 13   6  8
+  [ 8] .comment          PROGBITS        0000000000000000 0010a0 000027 01  MS  0   0  1
+  [ 9] .note.GNU-stack   PROGBITS        0000000000000000 0010c7 000000 00      0   0  1
+  [10] .note.gnu.property NOTE            0000000000000000 0010c8 000020 00   A  0   0  8
+  [11] .eh_frame         PROGBITS        0000000000000000 0010e8 000058 00   A  0   0  8
+  [12] .rela.eh_frame    RELA            0000000000000000 001378 000030 18   I 13  11  8
+  [13] .symtab           SYMTAB          0000000000000000 001140 000138 18     14   7  8
+  [14] .strtab           STRTAB          0000000000000000 001278 00006c 00      0   0  1
+  [15] .shstrtab         STRTAB          0000000000000000 0013a8 000089 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), l (large), p (processor specific)
++ readelf -S -W legacy.o
+There are 13 section headers, starting at offset 0x308:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        0000000000000000 000040 000034 00  AX  0   0  1
+  [ 2] .rela.text        RELA            0000000000000000 000220 000048 18   I 10   1  8
+  [ 3] .data             PROGBITS        0000000000000000 000074 000000 00  WA  0   0  1
+  [ 4] .bss              NOBITS          0000000000000000 000074 000004 00  WA  0   0  4
+  [ 5] .comment          PROGBITS        0000000000000000 000074 000027 01  MS  0   0  1
+  [ 6] .note.GNU-stack   PROGBITS        0000000000000000 00009b 000000 00      0   0  1
+  [ 7] .note.gnu.property NOTE            0000000000000000 0000a0 000020 00   A  0   0  8
+  [ 8] .eh_frame         PROGBITS        0000000000000000 0000c0 000058 00   A  0   0  8
+  [ 9] .rela.eh_frame    RELA            0000000000000000 000268 000030 18   I 10   8  8
+  [10] .symtab           SYMTAB          0000000000000000 000118 0000c0 18     11   6  8
+  [11] .strtab           STRTAB          0000000000000000 0001d8 000046 00      0   0  1
+  [12] .shstrtab         STRTAB          0000000000000000 000298 00006c 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), l (large), p (processor specific)
++ readelf -S -W hotfix.o
+There are 13 section headers, starting at offset 0x270:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        0000000000000000 000040 000027 00  AX  0   0  1
+  [ 2] .rela.text        RELA            0000000000000000 000188 000060 18   I 10   1  8
+  [ 3] .data             PROGBITS        0000000000000000 000067 000000 00  WA  0   0  1
+  [ 4] .bss              NOBITS          0000000000000000 000067 000000 00  WA  0   0  1
+  [ 5] .comment          PROGBITS        0000000000000000 000067 000027 01  MS  0   0  1
+  [ 6] .note.GNU-stack   PROGBITS        0000000000000000 00008e 000000 00      0   0  1
+  [ 7] .note.gnu.property NOTE            0000000000000000 000090 000020 00   A  0   0  8
+  [ 8] .eh_frame         PROGBITS        0000000000000000 0000b0 000038 00   A  0   0  8
+  [ 9] .rela.eh_frame    RELA            0000000000000000 0001e8 000018 18   I 10   8  8
+  [10] .symtab           SYMTAB          0000000000000000 0000e8 000078 18     11   3  8
+  [11] .strtab           STRTAB          0000000000000000 000160 000023 00      0   0  1
+  [12] .shstrtab         STRTAB          0000000000000000 000200 00006c 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), l (large), p (processor specific)
++ readelf -S -W main.o
+There are 13 section headers, starting at offset 0x268:
+
+Section Headers:
+  [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            0000000000000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        0000000000000000 000040 00001e 00  AX  0   0  1
+  [ 2] .rela.text        RELA            0000000000000000 000198 000048 18   I 10   1  8
+  [ 3] .data             PROGBITS        0000000000000000 00005e 000000 00  WA  0   0  1
+  [ 4] .bss              NOBITS          0000000000000000 00005e 000000 00  WA  0   0  1
+  [ 5] .comment          PROGBITS        0000000000000000 00005e 000027 01  MS  0   0  1
+  [ 6] .note.GNU-stack   PROGBITS        0000000000000000 000085 000000 00      0   0  1
+  [ 7] .note.gnu.property NOTE            0000000000000000 000088 000020 00   A  0   0  8
+  [ 8] .eh_frame         PROGBITS        0000000000000000 0000a8 000038 00   A  0   0  8
+  [ 9] .rela.eh_frame    RELA            0000000000000000 0001e0 000018 18   I 10   8  8
+  [10] .symtab           SYMTAB          0000000000000000 0000e0 000090 18     11   3  8
+  [11] .strtab           STRTAB          0000000000000000 000170 000027 00      0   0  1
+  [12] .shstrtab         STRTAB          0000000000000000 0001f8 00006c 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  D (mbind), l (large), p (processor specific)
++ strings -a core.o
+System Initialized v1.0
+FLAG{b1nary_4rch4eology_2026}
+%s, Mode: %d
+GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+core.c
+large_buffer
+internal_cleanup
+system_mode
+config_table
+welcome_msg
+secret_token
+print_status
+printf
+.symtab
+.strtab
+.shstrtab
+.rela.text
+.data
+.bss
+.rodata
+.rela.data.rel.local
+.comment
+.note.GNU-stack
+.note.gnu.property
+.rela.eh_frame
++ readelf -p .rodata -p .comment core.o
+
+String dump of section '.rodata':
+  [     0]  System Initialized v1.0
+  [    20]  FLAG{b1nary_4rch4eology_2026}
+  [    3e]  %s, Mode: %d\n
+
+
+String dump of section '.comment':
+  [     1]  GCC: (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+
++ readelf -x .data.rel.local -r core.o
+
+Relocation section '.rela.text' at offset 0x12e8 contains 5 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+00000000000a  000300000002 R_X86_64_PC32     0000000000000000 .bss - 5
+000000000021  000700000002 R_X86_64_PC32     0000000000000000 system_mode - 4
+000000000028  000900000002 R_X86_64_PC32     0000000000000000 welcome_msg - 4
+00000000002f  000500000002 R_X86_64_PC32     0000000000000000 .rodata + 3a
+00000000003f  000c00000004 R_X86_64_PLT32    0000000000000000 printf - 4
+
+Relocation section '.rela.data.rel.local' at offset 0x1360 contains 1 entry:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000000000  000500000001 R_X86_64_64       0000000000000000 .rodata + 0
+
+Relocation section '.rela.eh_frame' at offset 0x1378 contains 2 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000000020  000200000002 R_X86_64_PC32     0000000000000000 .text + 0
+000000000040  000200000002 R_X86_64_PC32     0000000000000000 .text + 12
+
+Hex dump of section '.data.rel.local':
+ NOTE: This section has relocations against it, but these have NOT been applied to this dump.
+  0x00000000 00000000 00000000                   ........
+
++ objdump -s -j .data core.o
++ head -6
+
+core.o:     file format elf64-x86-64
+
+Contents of section .data:
+ 0000 01000000 00000000 00000000 00000000  ................
+ 0010 00000000 00000000 00000000 00000000  ................
++ nm core.o
+0000000000000020 D config_table
+0000000000000000 t internal_cleanup
+0000000000000000 b large_buffer
+0000000000000012 T print_status
+                 U printf
+0000000000000020 R secret_token
+0000000000000000 D system_mode
+0000000000000000 D welcome_msg
++ nm legacy.o
+000000000000001a T apply_legacy_patch
+0000000000000000 b legacy_counter
+0000000000000000 t legacy_helper
+0000000000000004 C system_mode
++ nm hotfix.o
+0000000000000000 T apply_hotfix
+0000000000000004 C system_mode
++ nm main.o
+                 U apply_hotfix
+0000000000000000 T main
+                 U print_status
++ readelf -s -W core.o
+
+Symbol table '.symtab' contains 13 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS core.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1 .text
+     3: 0000000000000000     0 SECTION LOCAL  DEFAULT    4 .bss
+     4: 0000000000000000 50000 OBJECT  LOCAL  DEFAULT    4 large_buffer
+     5: 0000000000000000     0 SECTION LOCAL  DEFAULT    5 .rodata
+     6: 0000000000000000    18 FUNC    LOCAL  DEFAULT    1 internal_cleanup
+     7: 0000000000000000     4 OBJECT  GLOBAL DEFAULT    3 system_mode
+     8: 0000000000000020  4000 OBJECT  GLOBAL DEFAULT    3 config_table
+     9: 0000000000000000     8 OBJECT  GLOBAL DEFAULT    6 welcome_msg
+    10: 0000000000000020    30 OBJECT  GLOBAL DEFAULT    5 secret_token
+    11: 0000000000000012    52 FUNC    GLOBAL DEFAULT    1 print_status
+    12: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND printf
++ readelf -s -W legacy.o
+
+Symbol table '.symtab' contains 8 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS legacy.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1 .text
+     3: 0000000000000000     0 SECTION LOCAL  DEFAULT    4 .bss
+     4: 0000000000000000     4 OBJECT  LOCAL  DEFAULT    4 legacy_counter
+     5: 0000000000000000    26 FUNC    LOCAL  DEFAULT    1 legacy_helper
+     6: 0000000000000004     4 OBJECT  GLOBAL DEFAULT  COM system_mode
+     7: 000000000000001a    26 FUNC    GLOBAL DEFAULT    1 apply_legacy_patch
++ readelf -s -W hotfix.o
+
+Symbol table '.symtab' contains 5 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS hotfix.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1 .text
+     3: 0000000000000001     4 OBJECT  GLOBAL DEFAULT  COM system_mode
+     4: 0000000000000000    39 FUNC    GLOBAL DEFAULT    1 apply_hotfix
++ readelf -s -W main.o
+
+Symbol table '.symtab' contains 6 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS main.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1 .text
+     3: 0000000000000000    30 FUNC    GLOBAL DEFAULT    1 main
+     4: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND print_status
+     5: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND apply_hotfix
++ nm -A core.o legacy.o hotfix.o main.o
++ uniq -c
++ awk {print $NF}
++ sort
++ sort -rn
+      3 system_mode
+      2 print_status
+      2 apply_hotfix
+      1 welcome_msg
+      1 secret_token
+      1 printf
+      1 main
+      1 legacy_helper
+      1 legacy_counter
+      1 large_buffer
+      1 internal_cleanup
+      1 config_table
+      1 apply_legacy_patch
++ nm -A core.o legacy.o hotfix.o main.o
++ grep -w system_mode
+core.o:0000000000000000 D system_mode
+legacy.o:0000000000000004 C system_mode
+hotfix.o:0000000000000004 C system_mode
++ objdump -d -M intel -r core.o legacy.o hotfix.o main.o
+
+core.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <internal_cleanup>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	c6 05 00 00 00 00 00 	mov    BYTE PTR [rip+0x0],0x0        # f <internal_cleanup+0xf>
+			a: R_X86_64_PC32	.bss-0x5
+   f:	90                   	nop
+  10:	5d                   	pop    rbp
+  11:	c3                   	ret
+
+0000000000000012 <print_status>:
+  12:	f3 0f 1e fa          	endbr64
+  16:	55                   	push   rbp
+  17:	48 89 e5             	mov    rbp,rsp
+  1a:	e8 e1 ff ff ff       	call   0 <internal_cleanup>
+  1f:	8b 15 00 00 00 00    	mov    edx,DWORD PTR [rip+0x0]        # 25 <print_status+0x13>
+			21: R_X86_64_PC32	system_mode-0x4
+  25:	48 8b 05 00 00 00 00 	mov    rax,QWORD PTR [rip+0x0]        # 2c <print_status+0x1a>
+			28: R_X86_64_PC32	welcome_msg-0x4
+  2c:	48 8d 0d 00 00 00 00 	lea    rcx,[rip+0x0]        # 33 <print_status+0x21>
+			2f: R_X86_64_PC32	.rodata+0x3a
+  33:	48 89 c6             	mov    rsi,rax
+  36:	48 89 cf             	mov    rdi,rcx
+  39:	b8 00 00 00 00       	mov    eax,0x0
+  3e:	e8 00 00 00 00       	call   43 <print_status+0x31>
+			3f: R_X86_64_PLT32	printf-0x4
+  43:	90                   	nop
+  44:	5d                   	pop    rbp
+  45:	c3                   	ret
+
+legacy.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <legacy_helper>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	8b 05 00 00 00 00    	mov    eax,DWORD PTR [rip+0x0]        # e <legacy_helper+0xe>
+			a: R_X86_64_PC32	.bss-0x4
+   e:	83 c0 01             	add    eax,0x1
+  11:	89 05 00 00 00 00    	mov    DWORD PTR [rip+0x0],eax        # 17 <legacy_helper+0x17>
+			13: R_X86_64_PC32	.bss-0x4
+  17:	90                   	nop
+  18:	5d                   	pop    rbp
+  19:	c3                   	ret
+
+000000000000001a <apply_legacy_patch>:
+  1a:	f3 0f 1e fa          	endbr64
+  1e:	55                   	push   rbp
+  1f:	48 89 e5             	mov    rbp,rsp
+  22:	e8 d9 ff ff ff       	call   0 <legacy_helper>
+  27:	c7 05 00 00 00 00 2a 	mov    DWORD PTR [rip+0x0],0x2a        # 31 <apply_legacy_patch+0x17>
+  2e:	00 00 00 
+			29: R_X86_64_PC32	system_mode-0x8
+  31:	90                   	nop
+  32:	5d                   	pop    rbp
+  33:	c3                   	ret
+
+hotfix.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <apply_hotfix>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	c6 05 00 00 00 00 41 	mov    BYTE PTR [rip+0x0],0x41        # f <apply_hotfix+0xf>
+			a: R_X86_64_PC32	system_mode-0x5
+   f:	c6 05 00 00 00 00 42 	mov    BYTE PTR [rip+0x0],0x42        # 16 <apply_hotfix+0x16>
+			11: R_X86_64_PC32	system_mode-0x4
+  16:	c6 05 00 00 00 00 43 	mov    BYTE PTR [rip+0x0],0x43        # 1d <apply_hotfix+0x1d>
+			18: R_X86_64_PC32	system_mode-0x3
+  1d:	c6 05 00 00 00 00 00 	mov    BYTE PTR [rip+0x0],0x0        # 24 <apply_hotfix+0x24>
+			1f: R_X86_64_PC32	system_mode-0x2
+  24:	90                   	nop
+  25:	5d                   	pop    rbp
+  26:	c3                   	ret
+
+main.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <main>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	e8 00 00 00 00       	call   d <main+0xd>
+			9: R_X86_64_PLT32	print_status-0x4
+   d:	e8 00 00 00 00       	call   12 <main+0x12>
+			e: R_X86_64_PLT32	apply_hotfix-0x4
+  12:	e8 00 00 00 00       	call   17 <main+0x17>
+			13: R_X86_64_PLT32	print_status-0x4
+  17:	b8 00 00 00 00       	mov    eax,0x0
+  1c:	5d                   	pop    rbp
+  1d:	c3                   	ret
++ gcc -fcommon core.o legacy.o hotfix.o main.o -o app
++ echo link exit=0
+link exit=0
++ ./app
+System Initialized v1.0, Mode: 1
+System Initialized v1.0, Mode: 4407873
++ gcc -fcommon -Wl,--warn-common core.o legacy.o hotfix.o main.o -o app_warn
+/usr/bin/ld: legacy.o: warning: common of `system_mode' overridden by definition from core.o
+/usr/bin/ld: hotfix.o: warning: common of `system_mode' overridden by definition from core.o
++ echo link exit=0
++ rm -f app_warn
+link exit=0
++ nm app
++ grep system_mode
+0000000000404040 D system_mode
++ readelf -s -W app
++ grep -E  (system_mode|config_table|large_buffer|welcome_msg)$
+    12: 0000000000405040 50000 OBJECT  LOCAL  DEFAULT   24 large_buffer
+    32: 0000000000404040     4 OBJECT  GLOBAL DEFAULT   23 system_mode
+    36: 0000000000405000     8 OBJECT  GLOBAL DEFAULT   23 welcome_msg
+    38: 0000000000404060  4000 OBJECT  GLOBAL DEFAULT   23 config_table
++ + grepreadelf -E -S  \.(data|bss)  -W
+ app
+  [23] .data             PROGBITS        0000000000404020 003020 000fe8 00  WA  0   0 32
+  [24] .bss              NOBITS          0000000000405020 004008 00c378 00  WA  0   0 32
++ size app
+   text	   data	    bss	    dec	    hex	filename
+   1403	   4600	  50040	  56043	   daeb	app
++ gcc -fno-common main.o hotfix.o legacy.o core.o -o app_better
++ echo link exit=0
+link exit=0
++ + nmgrep app_better system_mode
+
+0000000000404040 D system_mode
++ gcc -c -fno-common hotfix.c -o hotfix_nocommon.o
++ nm hotfix_nocommon.o
+0000000000000000 T apply_hotfix
+0000000000000000 B system_mode
++ gcc -fno-common main.o hotfix_nocommon.o legacy.o core.o -o app_better
+/usr/bin/ld: warning: alignment 1 of normal symbol `system_mode' in hotfix_nocommon.o is smaller than 4 used by the common definition in legacy.o
+/usr/bin/ld: warning: NOTE: alignment discrepancies can cause real problems.  Investigation is advised.
+/usr/bin/ld: core.o:(.data+0x0): multiple definition of `system_mode'; hotfix_nocommon.o:(.bss+0x0): first defined here
+collect2: error: ld returned 1 exit status
++ echo link exit=1
+link exit=1
++ gcc -c -fno-common -Wall -Wextra fix/hotfix_extern.c -o fix/hotfix_extern.o
++ nm fix/hotfix_extern.o
+0000000000000000 T apply_hotfix
+                 U system_mode
++ gcc -fno-common main.o fix/hotfix_extern.o legacy.o core.o -o fix/app_better_extern
+link exit=0
++ echo link exit=0
++ + grepnm system_mode
+ fix/app_better_extern
+0000000000404040 D system_mode
++ ./fix/app_better_extern
+System Initialized v1.0, Mode: 1
+System Initialized v1.0, Mode: 4407873
++ gcc -c -fno-common -Wall -Wextra fix/hotfix_static.c -o fix/hotfix_static.o
++ nm fix/hotfix_static.o
+0000000000000000 T apply_hotfix
+0000000000000000 b system_mode
++ gcc -fno-common main.o fix/hotfix_static.o legacy.o core.o -o fix/app_better_static
+link exit=0
++ echo link exit=0
++ nm fix/app_better_static
++ grep system_mode
+0000000000405021 b system_mode
+0000000000404040 D system_mode
++ ./fix/app_better_static
+System Initialized v1.0, Mode: 1
+System Initialized v1.0, Mode: 1
