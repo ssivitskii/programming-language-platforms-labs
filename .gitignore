@@ -45,3 +45,6 @@ temp/
 /Lab2/app_better
 /Lab2/fix/app_better_extern
 /Lab2/fix/app_better_static
+
+# Laboratory 3 reproducible build artifacts
+/Lab3/build/

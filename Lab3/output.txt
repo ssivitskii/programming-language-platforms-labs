@@ -1,0 +1,270 @@
++ + gcc --version
+head -1
+gcc (GCC) 14.4.0
++ g++ --version
++ head -1
+g++ (GCC) 14.4.0
++ + ldhead --version -1
+
+GNU ld (GNU Binutils for Debian) 2.44
++ uname -m
+x86_64
++ sha256sum ../../../vector_math.h ../../../vector_math.c ../../../main.cpp
+ad359428499c320fdd68f00584a48df59ef50908e8a88ea3bb30db0463354af1  ../../../vector_math.h
+1e44715287dca19d464c9203916be7a46f50864952171b439e886b1ae01bed85  ../../../vector_math.c
+09221a5efa1bdcf1e19e674d21eaec13eb65c5aa837077be0475d74e7d4c0032  ../../../main.cpp
++ gcc -c vector_math.c -o vector_math.o
++ g++ -c main.cpp -o main.o
++ nm main.o
++ grep -E  main$|dot_product|get_lib_version
+                 U dot_product
+                 U get_lib_version
+0000000000000000 T main
++ ar rcs libmath_static.a vector_math.o
++ sha256sum libmath_static.a
++ awk {print $1}
++ archive_hash_first=62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
++ ar rcs libmath_static.a vector_math.o
++ sha256sum libmath_static.a
++ awk {print $1}
++ archive_hash_second=62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
++ test 62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc = 62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
++ printf archive sha256 after first ar rcs:  %s\n 62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
++ printf archive sha256 after second ar rcs: %s\n 62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
+archive sha256 after first ar rcs:  62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
+archive sha256 after second ar rcs: 62bbae42a819807ffb91ed2407671b3b58ca553d76adf89c30b9a800491266dc
++ ar t libmath_static.a
+vector_math.o
++ ar t libmath_static.a
++ wc -l
++ tr -d [:space:]
++ member_count=1
++ test 1 -eq 1
++ ar t libmath_static.a
++ test vector_math.o = vector_math.o
++ g++ main.o -L. -lmath_static -o app_static
++ expect_output ./app_static
++ ./app_static
++ actual=Library version: v2.4.1-release
+Dot product result: 32
++ expected=Library version: v2.4.1-release
+Dot product result: 32
++ [ Library version: v2.4.1-release
+Dot product result: 32 != Library version: v2.4.1-release
+Dot product result: 32 ]
++ printf %s\n Library version: v2.4.1-release
+Dot product result: 32
+Library version: v2.4.1-release
+Dot product result: 32
++ nm app_static
++ grep -E  (dot_product|get_lib_version)$
+0000000000401211 T dot_product
+0000000000401204 T get_lib_version
++ gcc -c vector_math.c -o vector_math_nopic.o
++ gcc -shared -o libmath_broken.so vector_math_nopic.o
+original no-PIC shared link exit=0
++ nopic_status=0
++ printf original no-PIC shared link exit=%s\n 0
++ readelf -rW vector_math_nopic.o
+
+Relocation section '.rela.text' at offset 0x230 contains 1 entry:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000007  0000000300000002 R_X86_64_PC32          0000000000000000 .data - 4
+
+Relocation section '.rela.data' at offset 0x248 contains 1 entry:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000000  0000000400000001 R_X86_64_64            0000000000000000 .rodata + 0
+
+Relocation section '.rela.eh_frame' at offset 0x260 contains 2 entries:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000020  0000000200000002 R_X86_64_PC32          0000000000000000 .text + 0
+0000000000000040  0000000200000002 R_X86_64_PC32          0000000000000000 .text + d
++ gcc -c -fPIC vector_math.c -o vector_math_pic.o
++ gcc -shared -o libmath_dynamic.so vector_math_pic.o
++ g++ main.o -L. -lmath_dynamic -o app_dynamic
++ LD_LIBRARY_PATH=. expect_output ./app_dynamic
++ ./app_dynamic
++ actual=Library version: v2.4.1-release
+Dot product result: 32
++ expected=Library version: v2.4.1-release
+Dot product result: 32
++ [ Library version: v2.4.1-release
+Dot product result: 32 != Library version: v2.4.1-release
+Dot product result: 32 ]
++ printf %s\n Library version: v2.4.1-release
+Dot product result: 32
+Library version: v2.4.1-release
+Dot product result: 32
++ size app_static app_dynamic libmath_dynamic.so
+   text	   data	    bss	    dec	    hex	filename
+   1900	    624	    280	   2804	    af4	app_static
+   1869	    648	    280	   2797	    aed	app_dynamic
+   1148	    488	      8	   1644	    66c	libmath_dynamic.so
++ + nm app_static
+grep -E  (dot_product|get_lib_version)$
+0000000000401211 T dot_product
+0000000000401204 T get_lib_version
++ + nm app_dynamic
+grep -E  (dot_product|get_lib_version)$
+                 U dot_product
+                 U get_lib_version
++ + readelfgrep NEEDED -dW
+ app_dynamic
+ 0x0000000000000001 (NEEDED)             Shared library: [libmath_dynamic.so]
+ 0x0000000000000001 (NEEDED)             Shared library: [libstdc++.so.6]
+ 0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+ 0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+ 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
++ cd ../nopic_control
++ cp ../work/vector_math.h .
++ sed s/^static const char\* LIB_VERSION/const char* LIB_VERSION/ ../work/vector_math.c
++ grep ^const char\* LIB_VERSION vector_math.c
+const char* LIB_VERSION = "v2.4.1-release";
++ gcc -c vector_math.c -o vector_math_nopic.o
++ readelf -rW vector_math_nopic.o
+
+Relocation section '.rela.text' at offset 0x218 contains 1 entry:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000007  0000000400000002 R_X86_64_PC32          0000000000000000 LIB_VERSION - 4
+
+Relocation section '.rela.data' at offset 0x230 contains 1 entry:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000000  0000000300000001 R_X86_64_64            0000000000000000 .rodata + 0
+
+Relocation section '.rela.eh_frame' at offset 0x248 contains 2 entries:
+    Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+0000000000000020  0000000200000002 R_X86_64_PC32          0000000000000000 .text + 0
+0000000000000040  0000000200000002 R_X86_64_PC32          0000000000000000 .text + d
++ gcc -shared -o libmath_control_nopic.so vector_math_nopic.o
++ control_nopic_status=1
++ cat nopic_link.log
+/usr/bin/ld: vector_math_nopic.o: warning: relocation against `LIB_VERSION' in read-only section `.text'
+/usr/bin/ld: vector_math_nopic.o: relocation R_X86_64_PC32 against symbol `LIB_VERSION' can not be used when making a shared object; recompile with -fPIC
+/usr/bin/ld: final link failed: bad value
+collect2: error: ld returned 1 exit status
+controlled no-PIC shared link exit=1
++ printf controlled no-PIC shared link exit=%s\n 1
++ test 1 -eq 1
++ grep -F R_X86_64_PC32 nopic_link.log
+/usr/bin/ld: vector_math_nopic.o: relocation R_X86_64_PC32 against symbol `LIB_VERSION' can not be used when making a shared object; recompile with -fPIC
++ gcc -c -fPIC vector_math.c -o vector_math_pic.o
++ gcc -shared -o libmath_control_pic.so vector_math_pic.o
++ test -s libmath_control_pic.so
++ cd ../work
++ g++ -L. -lmath_dynamic main.o -o app_wrong_order
++ wrong_order_status=0
++ cat wrong_order.log
+plain wrong-order link exit=0
++ printf plain wrong-order link exit=%s\n 0
++ g++ main.o -L. -lmath_dynamic -o app_correct
++ LD_LIBRARY_PATH=. expect_output ./app_correct
++ ./app_correct
++ actual=Library version: v2.4.1-release
+Dot product result: 32
++ expected=Library version: v2.4.1-release
+Dot product result: 32
++ [ Library version: v2.4.1-release
+Dot product result: 32 != Library version: v2.4.1-release
+Dot product result: 32 ]
++ printf %s\n Library version: v2.4.1-release
+Dot product result: 32
+Library version: v2.4.1-release
+Dot product result: 32
++ g++ -L. -lmath_static main.o -o app_static_wrong_order
++ static_wrong_order_status=1
++ cat static_wrong_order.log
+/usr/bin/ld: main.o: in function `main':
+main.cpp:(.text+0x46): undefined reference to `get_lib_version'
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product'
+collect2: error: ld returned 1 exit status
+static archive wrong-order link exit=1
++ printf static archive wrong-order link exit=%s\n 1
++ test 1 -eq 1
++ grep -F undefined reference to `get_lib_version static_wrong_order.log
+main.cpp:(.text+0x46): undefined reference to `get_lib_version'
++ grep -F undefined reference to `dot_product static_wrong_order.log
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product'
++ g++ -Wl,--as-needed -L. -lmath_dynamic main.o -o app_wrong_order_as_needed
++ as_needed_status=1
++ cat wrong_order_as_needed.log
+/usr/bin/ld: main.o: in function `main':
+main.cpp:(.text+0x46): undefined reference to `get_lib_version'
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product'
+collect2: error: ld returned 1 exit status
+explicit --as-needed wrong-order link exit=1
++ printf explicit --as-needed wrong-order link exit=%s\n 1
++ test 1 -eq 1
++ grep -F undefined reference to `get_lib_version wrong_order_as_needed.log
+main.cpp:(.text+0x46): undefined reference to `get_lib_version'
++ grep -F undefined reference to `dot_product wrong_order_as_needed.log
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product'
++ g++ -Wl,--as-needed main.o -L. -lmath_dynamic -o app_correct_as_needed
++ + grepreadelf -dW Shared library: \[libmath_dynamic.so\]
+ app_correct_as_needed
+ 0x0000000000000001 (NEEDED)             Shared library: [libmath_dynamic.so]
++ g++ -Wl,--no-as-needed -L. -lmath_dynamic main.o -o app_wrong_order_no_as_needed
++ readelf -dW app_wrong_order_no_as_needed
++ grep Shared library: \[libmath_dynamic.so\]
+ 0x0000000000000001 (NEEDED)             Shared library: [libmath_dynamic.so]
++ LD_LIBRARY_PATH=. expect_output ./app_wrong_order_no_as_needed
++ ./app_wrong_order_no_as_needed
++ actual=Library version: v2.4.1-release
+Dot product result: 32
++ expected=Library version: v2.4.1-release
+Dot product result: 32
++ [ Library version: v2.4.1-release
+Dot product result: 32 != Library version: v2.4.1-release
+Dot product result: 32 ]
+Library version: v2.4.1-release
+Dot product result: 32
++ printf %s\n Library version: v2.4.1-release
+Dot product result: 32
++ cd ../no_extern_c
++ cp ../work/main.cpp .
++ sed /^#ifdef __cplusplus$/,/^#endif$/d ../work/vector_math.h
++ grep -c __cplusplus\|extern "C" vector_math.h
++ true
++ test 0 -eq 0
++ g++ -c main.cpp -o main_no_extern.o
++ nm main_no_extern.o
++ grep -E dot_product|get_lib_version
+                 U _Z11dot_productPKiS0_i
+                 U _Z15get_lib_versionv
++ + nmgrep -C -E main_no_extern.o dot_product|get_lib_version
+
+                 U dot_product(int const*, int const*, int)
+                 U get_lib_version()
++ + grepnm -E ../work/libmath_dynamic.so
+  (dot_product|get_lib_version)$
+0000000000001106 T dot_product
+00000000000010f9 T get_lib_version
++ g++ main_no_extern.o -L../work -lmath_dynamic -o app_no_extern
++ no_extern_status=1
++ cat no_extern_link.log
+/usr/bin/ld: main_no_extern.o: in function `main':
+main.cpp:(.text+0x46): undefined reference to `get_lib_version()'
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product(int const*, int const*, int)'
+collect2: error: ld returned 1 exit status
++ printf link without extern C exit=%s\n 1
++ test 1 -eq 1
+link without extern C exit=1
++ grep -F undefined reference to `get_lib_version() no_extern_link.log
+main.cpp:(.text+0x46): undefined reference to `get_lib_version()'
++ grep -F undefined reference to `dot_product(int const*, int const*, int) no_extern_link.log
+/usr/bin/ld: main.cpp:(.text+0x88): undefined reference to `dot_product(int const*, int const*, int)'
++ cd ../../..
++ sha256sum vector_math.h vector_math.c main.cpp
+ad359428499c320fdd68f00584a48df59ef50908e8a88ea3bb30db0463354af1  vector_math.h
+1e44715287dca19d464c9203916be7a46f50864952171b439e886b1ae01bed85  vector_math.c
+09221a5efa1bdcf1e19e674d21eaec13eb65c5aa837077be0475d74e7d4c0032  main.cpp
++ + awksha256sum {print $1} vector_math.h
+
++ test ad359428499c320fdd68f00584a48df59ef50908e8a88ea3bb30db0463354af1 = ad359428499c320fdd68f00584a48df59ef50908e8a88ea3bb30db0463354af1
++ sha256sum vector_math.c
++ awk {print $1}
++ test 1e44715287dca19d464c9203916be7a46f50864952171b439e886b1ae01bed85 = 1e44715287dca19d464c9203916be7a46f50864952171b439e886b1ae01bed85
++ sha256sum main.cpp
++ awk {print $1}
++ test 09221a5efa1bdcf1e19e674d21eaec13eb65c5aa837077be0475d74e7d4c0032 = 09221a5efa1bdcf1e19e674d21eaec13eb65c5aa837077be0475d74e7d4c0032
++ printf %s\n ALL CHECKS PASSED
+ALL CHECKS PASSED
